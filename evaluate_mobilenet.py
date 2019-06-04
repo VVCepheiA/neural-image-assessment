@@ -1,12 +1,13 @@
 import numpy as np
 import argparse
 from path import Path
+from tqdm import tqdm
 
-from keras.models import Model
-from keras.layers import Dense, Dropout
-from keras.applications.mobilenet import MobileNet
-from keras.applications.mobilenet import preprocess_input
-from keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.applications.mobilenet import MobileNet
+from tensorflow.keras.applications.mobilenet import preprocess_input
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import tensorflow as tf
 
 from utils.score_utils import mean_score, std_score
@@ -52,8 +53,9 @@ with tf.device('/CPU:0'):
     model.load_weights('weights/mobilenet_weights.h5')
 
     score_list = []
+    NIMA_scores = []
 
-    for img_path in imgs:
+    for img_path in tqdm(imgs):
         img = load_img(img_path, target_size=target_size)
         x = img_to_array(img)
         x = np.expand_dims(x, axis=0)
@@ -67,10 +69,11 @@ with tf.device('/CPU:0'):
 
         file_name = Path(img_path).name.lower()
         score_list.append((file_name, mean))
+        NIMA_scores.append(mean)
 
-        print("Evaluating : ", img_path)
-        print("NIMA Score : %0.3f +- (%0.3f)" % (mean, std))
-        print()
+        # print("Evaluating : ", img_path)
+        # print("NIMA Score : %0.3f +- (%0.3f)" % (mean, std))
+        # print()
 
     if rank_images:
         print("*" * 40, "Ranking Images", "*" * 40)
@@ -78,5 +81,8 @@ with tf.device('/CPU:0'):
 
         for i, (name, score) in enumerate(score_list):
             print("%d)" % (i + 1), "%s : Score = %0.5f" % (name, score))
+
+    print("MEAN: ", np.mean(NIMA_scores))
+    print("MEDIAN: ", np.median(NIMA_scores))
 
 

@@ -2,11 +2,11 @@ import numpy as np
 import argparse
 from path import Path
 
-from keras.models import Model
-from keras.layers import Dense, Dropout
-from keras.applications.inception_resnet_v2 import InceptionResNetV2
-from keras.applications.inception_resnet_v2 import preprocess_input
-from keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.applications.inception_resnet_v2 import InceptionResNetV2
+from tensorflow.keras.applications.inception_resnet_v2 import preprocess_input
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import tensorflow as tf
 
 from utils.score_utils import mean_score, std_score
